@@ -1,5 +1,5 @@
 {
-  "name": "tron-messageboard",
+  "name": "crypto-cannabis-game-atm-by-kin-kendall-and-srinjoy-chakravarty",
   "version": "0.1.0",
   "homepage": "./",
   "private": true,
@@ -9,7 +9,7 @@
     "react": "^16.5.2",
     "react-custom-scrollbars": "^4.2.1",
     "react-dom": "^16.5.2",
-    "react-scripts": "2.0.4",
+    "react-scripts": "^3.0.0",
     "sweetalert2": "^7.28.4",
     "tronweb": "^2.0.30"
   },
