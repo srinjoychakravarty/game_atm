@@ -1,8 +1,6 @@
 //const contractAddress = 'TEKMUKXhkYuwNxa5Y8jpeZCxCrRdDnaSNt' ///// paste (base58) key of SmartContract instead of current key
 //const contractAddress = '' ///// paste (base58) key of SmartContract instead of current key
 
-
-
 const utils = {
     tronWeb: false,
     contract: false,
@@ -16,4 +14,3 @@ const utils = {
 };
 
 export default utils;
-

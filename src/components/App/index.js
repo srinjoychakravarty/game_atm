@@ -13,7 +13,7 @@ const SATVA_TOKEN_ID = 1001010;
 const LEAF_TOKEN_ID = 1001864;
 const SEED_TOKEN_ID = 1000001;
 const TERC_TOKEN_ID = 1000226;
-const LOCT_TOKEN_ID = 1000604; // Testing token ID : 1000292
+const LOCT_TOKEN_ID = 1000604; 
 const MMT_TOKEN_ID = 1001071;
 const ACTIV_TOKEN_ID = 1002171;
 const KIWI_TOKEN_ID = 1001050;
@@ -827,4 +827,3 @@ class App extends React.Component {
 }
 
 export default App;
-
