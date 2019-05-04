@@ -1,4 +1,4 @@
-# CodeXpert Tron (TRX) TRC20 Platform
+# Crypto Cannabis Game
 
 ------------------------
 
