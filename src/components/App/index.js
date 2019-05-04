@@ -7,48 +7,65 @@ import Swal from 'sweetalert2';
 import './App.scss';
 
 const FOUNDATION_ADDRESS = 'TWiWt5SEDzaEqS6kE5gandWMNfxR2B5xzg';
-
+const CONTRACT_ADDRESS = 'TWAAJowwzmtYjJh6Q33GF7Q7wi2BAND1fV';
+const INDCA_TOKEN_ID = 1001009;
+const SATVA_TOKEN_ID = 1001010;
+const LEAF_TOKEN_ID = 1001864;
+const SEED_TOKEN_ID = 1000001;
+const TERC_TOKEN_ID = 1000226;
+const LOCT_TOKEN_ID = 1000604; // Testing token ID : 1000292
+const MMT_TOKEN_ID = 1001071;
+const ACTIV_TOKEN_ID = 1002171;
+const KIWI_TOKEN_ID = 1001050;
 class App extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
             balance: 0,
-            getbalanceaddress: '',
-            transferaddress: '',
-            transferamount: '',
-            contractAddress:'',
-            tokenname:'',
-            tokensymbol:'',
-            tronwebaddress:'',
-            totalSupply:'',
-            burnamount:'',
-            transferfromfromaddress:'',
-            transferfromtoaddress:'',
-            transferfromamount:'',
-            approvespender:'',
-            approveamount:'',
-            burnfromfrom:'',
-            burnfromamount:'',
-
+            gettrxINDCAamount: 0,
+            gettrxSATVAamount: 0,
+            gettrxLEAFamount: 0,
+            gettrxSEEDamount: 0,
+            gettrxTERCamount: 0,
+            gettrxLOCTamount: 0,
+            gettrxMMTamount: 0,
+            gettrxACTIVamount: 0,
+            gettrxKIWIamount: 0,
+            address: '',
+            INDCAcontractbalance:0,
+            SATVAcontractbalance:0,
+            LEAFcontractbalance:0,
+            SEEDcontractbalance:0,
+            TRECcontractbalance:0,
+            LOCTcontractbalance:0,
+            MMTcontractbalance:0,
+            ACTIVcontractbalance:0,
+            KIWIcontractbalance:0,
+            TRXcontractbalance:0,
+            newowner:'',
+            deposittrxvalue:0,
+            withdrawtrxaddress:'',
+            withdrawtrxamount:0,
 
               tronWeb: {
                   installed: false,
                   loggedIn: false
               },
             }
-        this.updateGetBalanceInputValue = this.updateGetBalanceInputValue.bind(this)
-        this.updateTransferInputValue = this.updateTransferInputValue.bind(this)
-        this.updateTransferAmountInputValue = this.updateTransferAmountInputValue.bind(this)
-        this.updateContractAddressInput = this.updateContractAddressInput.bind(this)
-        this.updateBurnAmountInputValue = this.updateBurnAmountInputValue.bind(this)
-        this.updateTansferFromFromInputValue = this.updateTansferFromFromInputValue.bind(this)
-        this.updateTansferFromToInputValue = this.updateTansferFromToInputValue.bind(this)
-        this.updateTansferFromAmountInputValue = this.updateTansferFromAmountInputValue.bind(this)
-        this.updateApproveSpender = this.updateApproveSpender.bind(this)
-        this.updateApproveValue = this.updateApproveValue.bind(this)
-        this.updateBurnFromFromValue = this.updateBurnFromFromValue.bind(this)
-        this.updateBurnFromAmountValue = this.updateBurnFromAmountValue.bind(this)
+        this.updateINDCAValue = this.updateINDCAValue.bind(this)
+        this.updateSATVAValue = this.updateSATVAValue.bind(this)
+        this.updateLEAFValue = this.updateLEAFValue.bind(this)
+        this.updateSEEDValue = this.updateSEEDValue.bind(this)
+        this.updateTERCValue = this.updateTERCValue.bind(this)
+        this.updateLOCTValue = this.updateLOCTValue.bind(this)
+        this.updateMMTValue = this.updateMMTValue.bind(this)
+        this.updateACTIVValue = this.updateACTIVValue.bind(this)
+        this.updateKIWIValue = this.updateKIWIValue.bind(this)
+        this.updateWithdrawTRXAddressValue = this.updateWithdrawTRXAddressValue.bind(this)
+        this.updateWithdrawTRXAmountValue = this.updateWithdrawTRXAmountValue.bind(this)
+        this.updateDepositTRXValue = this.updateDepositTRXValue.bind(this)
+        this.updateTransferOwnershipValue = this.updateTransferOwnershipValue.bind(this)
 
     }
 
@@ -100,9 +117,9 @@ class App extends React.Component {
                     return tries++;
 
                 this.setState({
-                    tronWeb: tronWebState
+                    tronWeb: tronWebState,
+                    contractAddress: CONTRACT_ADDRESS,
                 });
-
                 resolve();
             }, 100);
         });
@@ -129,52 +146,256 @@ class App extends React.Component {
             });
         }
 
+        await Utils.setTronWeb(window.tronWeb, CONTRACT_ADDRESS);
+
+        this.setState({
+            address : Utils.tronWeb.address.fromHex((((await Utils.tronWeb.trx.getAccount()).address).toString())),
+            INDCAcontractbalance : parseFloat((await Utils.contract.getTRC10TokenBalance(INDCA_TOKEN_ID).call()).toString()),
+            SATVAcontractbalance : parseFloat((await Utils.contract.getTRC10TokenBalance(SATVA_TOKEN_ID).call()).toString()),
+            LEAFcontractbalance : parseFloat((await Utils.contract.getTRC10TokenBalance(LEAF_TOKEN_ID).call()).toString()),
+            SEEDcontractbalance : parseFloat((await Utils.contract.getTRC10TokenBalance(SEED_TOKEN_ID).call()).toString()),
+            TERCcontractbalance : parseFloat((await Utils.contract.getTRC10TokenBalance(TERC_TOKEN_ID).call()).toString()),
+            LOCTcontractbalance : parseFloat((await Utils.contract.getTRC10TokenBalance(LOCT_TOKEN_ID).call()).toString()),
+            MMTcontractbalance : parseFloat((await Utils.contract.getTRC10TokenBalance(MMT_TOKEN_ID).call()).toString()),
+            ACTIVcontractbalance : parseFloat((await Utils.contract.getTRC10TokenBalance(ACTIV_TOKEN_ID).call()).toString()),
+            KIWIcontractbalance : parseFloat((await Utils.contract.getTRC10TokenBalance(KIWI_TOKEN_ID).call()).toString()),
+            TRXcontractbalance : parseFloat((await Utils.contract.getBalance().call()).toString())/1000000,
+
+        });
 
         //await Utils.setTronWeb(window.tronWeb);
         //console.log(Utils.tronWeb.address.fromHex((((await Utils.tronWeb.trx.getAccount()).address).toString())));  /////// Get account address and info
-       // console.log(await Utils.tronWeb.trx.getBalance());
+        console.log(Utils.contract);
     }
 
-    ///////////////////////////////// DYNAMIC CONTRACT ADDRESS /////////////////////////
-    async updateContractAddressInput (evt) {
-            await this.setState({
-              contractAddress: evt.target.value
-            });
-            console.log('contractAddress : ', this.state.contractAddress);
-            await Utils.setTronWeb(window.tronWeb, this.state.contractAddress);
-            //const tmp_name = await Utils.contract.name().call();
-            const tmp_tronwebaddress = Utils.tronWeb.address.fromHex((((await Utils.tronWeb.trx.getAccount()).address).toString()));
-            await this.setState({
-              tokenname : await Utils.contract.name().call(),
-              tokensymbol : await Utils.contract.symbol().call(),
-              totalSupply : ((await Utils.contract.totalSupply().call()).toNumber())/100000000,
-              tronwebaddress:tmp_tronwebaddress
-            });
+    /////////////////////////////////////// SwapTRXINDCA /////////////////////////////////
+    async SwapTRXINDCA(_amount){
 
+        Utils.contract.OneToOneSwapTRC10(this.state.address, INDCA_TOKEN_ID).send({
+            shouldPollResponse: true,
+            callValue: Utils.tronWeb.toSun(_amount)
+        }).then(res => Swal({
+            title:'Transfer Successful',
+            type: 'success'
+        })).catch(err => Swal({
+            title:'Transfer Failed',
+            type: 'error'
+        }));
     }
-    ///////////////////////////////// DYNAMIC CONTRACT ADDRESS END /////////////////////////
 
-    /////////////////////////////////////// GET BALANCE /////////////////////////////////
-    async getBalance(_getbalanceaddress){
-        const balance = ((await Utils.contract.balanceOf(_getbalanceaddress).call()).toNumber())/100000000;
-        //const balance = await Utils.contract.decimals().call();
-        console.log('balance', balance);
-
-            this.setState({balance:balance})
-
-    }
-    updateGetBalanceInputValue (evt) {
-        console.log('getbalanceaddress : ', this.state.getbalanceaddress);
+    updateINDCAValue (evt) {
+        console.log('gettrxINDCAamount : ', this.state.gettrxINDCAamount);
             this.setState({
-              getbalanceaddress: evt.target.value
+              gettrxINDCAamount: evt.target.value
             });
     }
-    /////////////////////////////////////// GET BALANCE END /////////////////////////////////
+    /////////////////////////////////////// SwapTRXINDCA /////////////////////////////////
 
-    /////////////////////////////////// TRANSFER /////////////////////////////
-    Transfer(_to, _amount){
 
-        Utils.contract.transfer(_to, _amount).send({
+
+
+
+
+    /////////////////////////////////////// SwapTRXSATVA /////////////////////////////////
+    async SwapTRXSATVA(_amount){
+
+        Utils.contract.OneToOneSwapTRC10(this.state.address, SATVA_TOKEN_ID).send({
+            shouldPollResponse: true,
+            callValue: Utils.tronWeb.toSun(_amount)
+        }).then(res => Swal({
+            title:'Transfer Successful',
+            type: 'success'
+        })).catch(err => Swal({
+            title:'Transfer Failed',
+            type: 'error'
+        }));
+    }
+
+    updateSATVAValue (evt) {
+        console.log('gettrxSATVAamount : ', this.state.gettrxSATVAamount);
+            this.setState({
+              gettrxSATVAamount: evt.target.value
+            });
+    }
+    /////////////////////////////////////// SwapTRXSATVA /////////////////////////////////
+
+
+
+
+
+    /////////////////////////////////////// SwapTRXLEAF /////////////////////////////////
+    async SwapTRXLEAF(_amount){
+
+        Utils.contract.TwoToOneSwapTRC10(this.state.address, LEAF_TOKEN_ID).send({
+            shouldPollResponse: true,
+            callValue: Utils.tronWeb.toSun(_amount*2)
+        }).then(res => Swal({
+            title:'Transfer Successful',
+            type: 'success'
+        })).catch(err => Swal({
+            title:'Transfer Failed',
+            type: 'error'
+        }));
+    }
+
+    updateLEAFValue (evt) {
+        console.log('gettrxLEAFamount : ', this.state.gettrxLEAFamount);
+            this.setState({
+              gettrxLEAFamount: evt.target.value
+            });
+    }
+    /////////////////////////////////////// SwapTRXLEAF /////////////////////////////////
+
+
+    /////////////////////////////////////// SwapTRXSEED /////////////////////////////////
+    async SwapTRXSEED(_amount){
+
+        Utils.contract.FiveToOneSwapTRC10(this.state.address, SEED_TOKEN_ID).send({
+            shouldPollResponse: true,
+            callValue: Utils.tronWeb.toSun(_amount*5)
+        }).then(res => Swal({
+            title:'Transfer Successful',
+            type: 'success'
+        })).catch(err => Swal({
+            title:'Transfer Failed',
+            type: 'error'
+        }));
+    }
+
+    updateSEEDValue (evt) {
+        console.log('gettrxSEEDamount : ', this.state.gettrxSEEDamount);
+            this.setState({
+              gettrxSEEDamount: evt.target.value
+            });
+    }
+    /////////////////////////////////////// SwapTRXSEED /////////////////////////////////
+
+    /////////////////////////////////////// SwapTRXTERC /////////////////////////////////
+    async SwapTRXTERC(_amount){
+
+        Utils.contract.FiveToOneSwapTRC10(this.state.address, TERC_TOKEN_ID).send({
+            shouldPollResponse: true,
+            callValue: Utils.tronWeb.toSun(_amount*5)
+        }).then(res => Swal({
+            title:'Transfer Successful',
+            type: 'success'
+        })).catch(err => Swal({
+            title:'Transfer Failed',
+            type: 'error'
+        }));
+    }
+
+    updateTERCValue (evt) {
+        console.log('gettrxTERCamount : ', this.state.gettrxTERCamount);
+            this.setState({
+              gettrxTERCamount: evt.target.value
+            });
+    }
+    /////////////////////////////////////// SwapTRXTERC /////////////////////////////////
+
+
+
+    /////////////////////////////////////// SwapTRXLOCT /////////////////////////////////
+    async SwapTRXLOCT(_amount){
+
+        Utils.contract.FiveToOneSwapTRC10(this.state.address, LOCT_TOKEN_ID).send({
+            shouldPollResponse: true,
+            callValue: Utils.tronWeb.toSun(_amount*5)
+        }).then(res => Swal({
+            title:'Transfer Successful',
+            type: 'success'
+        })).catch(err => Swal({
+            title:'Transfer Failed',
+            type: 'error'
+        }));
+    }
+
+    updateLOCTValue (evt) {
+        console.log('gettrxLOCTamount : ', this.state.gettrxLOCTamount);
+            this.setState({
+              gettrxLOCTamount: evt.target.value
+            });
+    }
+    /////////////////////////////////////// SwapTRXLOCT /////////////////////////////////
+
+
+
+    /////////////////////////////////////// SwapTRXMMT /////////////////////////////////
+    async SwapTRXMMT(_amount){
+
+        Utils.contract.FiveToOneSwapTRC10(this.state.address, MMT_TOKEN_ID).send({
+            shouldPollResponse: true,
+            callValue: Utils.tronWeb.toSun(_amount*5)
+        }).then(res => Swal({
+            title:'Transfer Successful',
+            type: 'success'
+        })).catch(err => Swal({
+            title:'Transfer Failed',
+            type: 'error'
+        }));
+    }
+
+    updateMMTValue (evt) {
+        console.log('gettrxMMTamount : ', this.state.gettrxMMTamount);
+            this.setState({
+              gettrxMMTamount: evt.target.value
+            });
+    }
+    /////////////////////////////////////// SwapTRXMMT /////////////////////////////////
+
+
+    /////////////////////////////////////// SwapTRXACTIV /////////////////////////////////
+    async SwapTRXACTIV(_amount){
+
+        Utils.contract.FiveToOneSwapTRC10(this.state.address, ACTIV_TOKEN_ID).send({
+            shouldPollResponse: true,
+            callValue: Utils.tronWeb.toSun(_amount*5)
+        }).then(res => Swal({
+            title:'Transfer Successful',
+            type: 'success'
+        })).catch(err => Swal({
+            title:'Transfer Failed',
+            type: 'error'
+        }));
+    }
+
+    updateACTIVValue (evt) {
+        console.log('gettrxACTIVamount : ', this.state.gettrxACTIVamount);
+            this.setState({
+              gettrxACTIVamount: evt.target.value
+            });
+    }
+    /////////////////////////////////////// SwapTRXACTIV /////////////////////////////////
+
+
+    /////////////////////////////////////// SwapTRXKIWI /////////////////////////////////
+    async SwapTRXKIWI(_amount){
+
+        Utils.contract.FiveToOneSwapTRC10(this.state.address, KIWI_TOKEN_ID).send({
+            shouldPollResponse: true,
+            callValue: Utils.tronWeb.toSun(_amount*5)
+        }).then(res => Swal({
+            title:'Transfer Successful',
+            type: 'success'
+        })).catch(err => Swal({
+            title:'Transfer Failed',
+            type: 'error'
+        }));
+    }
+
+    updateKIWIValue (evt) {
+        console.log('gettrxKIWIamount : ', this.state.gettrxKIWIamount);
+            this.setState({
+              gettrxKIWIamount: evt.target.value
+            });
+    }
+    /////////////////////////////////////// SwapTRXKIWI /////////////////////////////////
+
+
+    /////////////////////////////////// withdrawTRX /////////////////////////////
+    withdrawTRX(_address, _amount){
+
+        Utils.contract.withdrawTRX(_address, _amount).send({
             shouldPollResponse: true,
             callValue: 0
         }).then(res => Swal({
@@ -188,172 +409,74 @@ class App extends React.Component {
 
     }
 
-    updateTransferInputValue (evt) {
+    updateWithdrawTRXAmountValue (evt) {
         this.setState({
-          transferaddress: evt.target.value
+          withdrawtrxamount: evt.target.value
         });
-    console.log('transferaddress : ', this.state.transferaddress);
+    console.log('withdrawtrxamount : ', this.state.withdrawtrxamount);
 
     }
 
-    updateTransferAmountInputValue (evt) {
-        console.log('transferamount : ', this.state.transferamount);
-            this.setState({
-              transferamount: evt.target.value
-            });
+    updateWithdrawTRXAddressValue (evt) {
+        this.setState({
+          withdrawtrxaddress: evt.target.value
+        });
+    console.log('withdrawtrxaddress : ', this.state.withdrawtrxaddress);
+
     }
-    /////////////////////////////////// TRANSFER END /////////////////////////////
+    /////////////////////////////////// withdrawTRX END /////////////////////////////
 
+    /////////////////////////////////// depositTRX /////////////////////////////
+    depositTRX(_amount){
 
-    /////////////////////////////  TRANSFER FROM ///////////////////////////////////
-
-    async TransferFrom(_from, _to, _amount){
-
-            const allowance = await Utils.contract.allowance(_from, this.state.tronwebaddress).call();
-            console.log('allowance : ', allowance);
-
-            Utils.contract.transferFrom(_from, _to, _amount).send({
-                shouldPollResponse: true,
-                callValue: 0
-            }).then(res => Swal({
-                title:'Transfer Successful',
-                type: 'success'
-            })).catch(err => Swal({
-                title:'Transfer Failed',
-                type: 'error'
-
-            }));
-
-        }
-
-        updateTansferFromFromInputValue (evt) {
-
-                this.setState({
-                  transferfromfromaddress: evt.target.value
-                });
-
-                console.log('transferfromfromaddress : ', this.state.transferfromfromaddress);
-        }
-
-        updateTansferFromToInputValue (evt) {
-
-                this.setState({
-                  transferfromtoaddress: evt.target.value
-                });
-                console.log('transferfromtoaddress : ', this.state.transferfromtoaddress);
-        }
-
-        updateTansferFromAmountInputValue (evt) {
-
-                this.setState({
-                  transferfromamount: evt.target.value
-                });
-
-                console.log('transferfromamount : ', this.state.transferfromamount);
-        }
-
-
-    /////////////////////////////  TRANSFER FROM END ///////////////////////////////////
-
-
-    //////////////////////////////////// APPROVE ////////////////////////////
-    Approve(_spender, _amount){
-
-                   Utils.contract.approve(_spender, _amount).send({
-                       shouldPollResponse: true,
-                       callValue: 0
-                   }).then(res => Swal({
-                       title:'Approval Successful',
-                       type: 'success'
-                   })).catch(err => Swal({
-                       title:'Approval Failed',
-                       type: 'error'
-
-                   }));
-    }
-
-    updateApproveValue (evt) {
-
-            this.setState({
-              approveamount: evt.target.value
-            });
-            console.log('approveamount : ', this.state.approveamount);
-    }
-
-    updateApproveSpender (evt) {
-
-            this.setState({
-              approvespender: evt.target.value
-            });
-
-            console.log('approvespender : ', this.state.approvespender);
-    }
-
-
-
-    //////////////////////////////////// APPROVE END ////////////////////////////
-
-    /////////////////////////// BURN /////////////////////////////////
-
-    Burn(_amount){
-
-        Utils.contract.burn(_amount).send({
+        Utils.contract.depositTRX().send({
             shouldPollResponse: true,
-            callValue: 0
+            callValue: Utils.tronWeb.toSun(_amount)
         }).then(res => Swal({
-            title:'Burn Successful',
+            title:'Transfer Successful',
             type: 'success'
         })).catch(err => Swal({
-            title:'Burn Failed',
+            title:'Transfer Failed',
             type: 'error'
 
         }));
 
     }
 
-    updateBurnAmountInputValue (evt) {
-        console.log('burnamount : ', this.state.burnamount);
-            this.setState({
-              burnamount: evt.target.value
-            });
+    updateDepositTRXValue (evt) {
+        this.setState({
+          deposittrxvalue: evt.target.value
+        });
+    console.log('deposittrxvalue : ', this.state.deposittrxvalue);
+
     }
-    /////////////////////////// BURN END /////////////////////////////////
+    /////////////////////////////////// depositTRX END /////////////////////////////
 
+    /////////////////////////////////// transferOwnership /////////////////////////////
+    transferOwnership(_address){
 
-    /////////////////////////// BURN FROM /////////////////////////////////
-
-    BurnFrom(_from, _amount){
-
-        Utils.contract.burnFrom(_from, _amount).send({
+        Utils.contract.transferOwnership(_address).send({
             shouldPollResponse: true,
-            callValue: 0
+            callValue: 0,
         }).then(res => Swal({
-            title:'Burn Successful',
+            title:'Transfer Successful',
             type: 'success'
         })).catch(err => Swal({
-            title:'Burn Failed',
+            title:'Transfer Failed',
             type: 'error'
 
         }));
 
     }
 
-    updateBurnFromAmountValue (evt) {
-        console.log('burnfromamount : ', this.state.burnfromamount);
-            this.setState({
-              burnfromamount: evt.target.value
-            });
+    updateTransferOwnershipValue (evt) {
+        this.setState({
+          newowner: evt.target.value
+        });
+    console.log('newowner : ', this.state.newowner);
+
     }
-
-    updateBurnFromFromValue (evt) {
-        console.log('burnfromfrom : ', this.state.burnfromfrom);
-            this.setState({
-              burnfromfrom: evt.target.value
-            });
-    }
-
-    /////////////////////////// BURN FROM END /////////////////////////////////
-
+    /////////////////////////////////// transferOwnership END /////////////////////////////
 
 
 
@@ -371,36 +494,9 @@ class App extends React.Component {
                 <div className='col-lg-12 text-center' >
                   <hr/>
 
-                      <div className="topnav">
-                        <img src={'CodeXpert.png'}  width="200px"/>
-                      </div>
+                  <h2 style={{color : 'red' }}>Crypto Cannabis Game Token ATM DApp</h2>
                   <hr style={{color: 'white', backgroundColor: 'white', height: 0.5}}/>
-
-                  <h1 style={{color : 'white' }}>Tron TRC20 Token Management Platform</h1>
-                  <hr style={{color: 'white', backgroundColor: 'white', height: 0.5}}/>
-                  <p> Your Address : {this.state.tronwebaddress} </p>
                   <br/>
-                  <br/>
-
-
-
-
-
-
-
-
-
-                  <p> Paste your contract address here : </p>
-                  <input style={{ width:"400px" }} value={this.state.contractAddress} onChange={this.updateContractAddressInput}/>
-                  <br/>
-                  <p> Token name : {this.state.tokenname}</p>
-                  <p> Token Symbol : {this.state.tokensymbol}</p>
-                  <p> Total Supply : {this.state.totalSupply}</p>
-                  <hr style={{color: 'white', backgroundColor: 'white', height: 0.5}}/>
-
-
-
-
 
 
 
@@ -409,17 +505,22 @@ class App extends React.Component {
 
                   <br/>
                   <br/>
-                  <input style={{ width:"400px" }} value={this.state.getbalanceaddress} onChange={this.updateGetBalanceInputValue}/>
+                  <h4> Get TRC10 INDCA Tokens in exchange with TRX for 1:1 ratio </h4>
+                  <p> <i> Current TRC10 INDCA Supply in Smart Contract : {this.state.INDCAcontractbalance} </i></p>
+                  <br/>
+                  <p>Type number of INDCA tokens to exchange</p>
+                  <input style={{ width:"200px" }} value={this.state.gettrxINDCAamount} onChange={this.updateINDCAValue}/>
                   <br/>
                   <br/>
-                  <button className='btn btn-primary' onClick={(event) => {
+                  <button className='btn btn-danger' onClick={(event) => {
                                                                        event.preventDefault()
-                                                                       this.getBalance(this.state.getbalanceaddress)
-                                                                     }  }>Get Balance
+                                                                       this.SwapTRXINDCA(this.state.gettrxINDCAamount)
+                                                                     }  }>Swap TRX to INDCA
                   </button>
                   <br/>
                   <br/>
-                  <p>Your balance is : {this.state.balance}</p>
+                  <br/>
+                  <br/>
                   <br/>
 
 
@@ -429,124 +530,284 @@ class App extends React.Component {
 
 
 
-
-
-
-                  <hr style={{color: 'white', backgroundColor: 'white', height: 0.5}}/>
-                  <br/>
-                  <p> To : </p>
-                  <input style={{ width:"400px" }} value={this.state.transferaddress} onChange={this.updateTransferInputValue}/>
-                  <p> Amount : </p>
-                  <input style={{ width:"200px" }} value={this.state.transferamount} onChange={this.updateTransferAmountInputValue}/>
                   <br/>
                   <br/>
-                  <button className='btn btn-primary' onClick={(event) => {
+                  <h4> Get TRC10 SATVA Tokens in exchange with TRX for 1:1 ratio </h4>
+                  <p> <i> Current TRC10 SATVA Supply in Smart Contract : {this.state.SATVAcontractbalance} </i></p>
+                  <br/>
+                  <p>Type number of SATVA tokens to exchange</p>
+                  <input style={{ width:"200px" }} value={this.state.gettrxSATVAamount} onChange={this.updateSATVAValue}/>
+                  <br/>
+                  <br/>
+                  <button className='btn btn-danger' onClick={(event) => {
                                                                        event.preventDefault()
-                                                                       this.Transfer(this.state.transferaddress, this.state.transferamount*100000000)
-                                                                     }  }>Transfer
-                  </button>
-                  <br/>
-
-
-
-
-
-
-
-
-                  <hr style={{color: 'white', backgroundColor: 'white', height: 0.5}}/>
-                  <br/>
-                  <p> From : </p>
-                  <input style={{ width:"400px" }} value={this.state.transferfromfromaddress} onChange={this.updateTansferFromFromInputValue}/>
-                  <p> To : </p>
-                  <input style={{ width:"400px" }} value={this.state.transferfromtoaddress} onChange={this.updateTansferFromToInputValue}/>
-                  <p> Amount : </p>
-                  <input style={{ width:"200px" }} value={this.state.transferfromamount} onChange={this.updateTansferFromAmountInputValue}/>
-                  <br/>
-                  <br/>
-                  <button className='btn btn-primary' onClick={(event) => {
-                                                                       event.preventDefault()
-                                                                       this.TransferFrom(this.state.transferfromfromaddress, this.state.transferfromtoaddress, this.state.transferfromamount*100000000)
-                                                                     }  }>Transfer From
-                  </button>
-                  <br/>
-
-
-
-
-
-
-
-
-
-
-
-                  <hr style={{color: 'white', backgroundColor: 'white', height: 0.5}}/>
-                  <br/>
-                  <p> Spender : </p>
-                  <input style={{ width:"400px" }} value={this.state.approvespender} onChange={this.updateApproveSpender}/>
-                  <p> Amount : </p>
-                  <input style={{ width:"400px" }} value={this.state.approveamount} onChange={this.updateApproveValue}/>
-                  <br/>
-                  <br/>
-                  <button className='btn btn-primary' onClick={(event) => {
-                                                                       event.preventDefault()
-                                                                       this.Approve(this.state.approvespender, this.state.approveamount*100000000)
-                                                                     }  }>Approve
-                  </button>
-                  <br/>
-
-
-
-
-
-
-
-
-
-
-
-                  <br/>
-                  <hr style={{color: 'white', backgroundColor: 'white', height: 0.5}}/>
-                  <br/>
-                  <p> Amount to burn : </p>
-                  <input style={{ width:"200px" }} value={this.state.burnamount} onChange={this.updateBurnAmountInputValue}/>
-                  <br/>
-                  <br/>
-                  <button className='btn btn-primary' onClick={(event) => {
-                                                                       event.preventDefault()
-                                                                       this.Burn(this.state.burnamount*100000000)
-                                                                     }  }>Burn
+                                                                       this.SwapTRXSATVA(this.state.gettrxSATVAamount)
+                                                                     }  }>Swap TRX to SATVA
                   </button>
                   <br/>
                   <br/>
-
-
-
-
-
-
-
-
-
-
                   <br/>
+                  <br/>
+                  <br/>
+
                   <hr style={{color: 'white', backgroundColor: 'white', height: 0.5}}/>
-                  <br/>
-                  <p> From : </p>
-                  <input style={{ width:"200px" }} value={this.state.burnfromfrom} onChange={this.updateBurnFromFromValue}/>
-                  <p> Amount to burn : </p>
-                  <input style={{ width:"200px" }} value={this.state.burnfromamount} onChange={this.updateBurnFromAmountValue}/>
+
+
+
+
 
                   <br/>
                   <br/>
-                  <button className='btn btn-primary' onClick={(event) => {
+                  <h4> Get TRC10 LEAF Tokens in exchange with TRX for 2:1 ratio </h4>
+                  <p> <i> Current TRC10 LEAF Supply in Smart Contract : {this.state.LEAFcontractbalance} </i></p>
+                  <br/>
+                  <p>Type number of LEAF tokens to exchange</p>
+                  <input style={{ width:"200px" }} value={this.state.gettrxLEAFamount} onChange={this.updateLEAFValue}/>
+                  <br/>
+                  <br/>
+                  <button className='btn btn-danger' onClick={(event) => {
                                                                        event.preventDefault()
-                                                                       this.BurnFrom(this.state.burnfromfrom, this.state.burnfromamount*100000000)
-                                                                     }  }>Burn From
+                                                                       this.SwapTRXLEAF(this.state.gettrxLEAFamount)
+                                                                     }  }>Swap TRX to LEAF
                   </button>
                   <br/>
                   <br/>
+                  <br/>
+                  <br/>
+                  <br/>
+                  <hr style={{color: 'white', backgroundColor: 'white', height: 0.5}}/>
+
+
+
+
+
+
+                  <br/>
+                  <br/>
+                  <h4> Get TRC10 SEED Tokens in exchange with TRX for 5:1 ratio </h4>
+                  <p> <i> Current TRC10 SEED Supply in Smart Contract : {this.state.SEEDcontractbalance} </i></p>
+                  <br/>
+                  <p>Type number of SEED tokens to exchange</p>
+                  <input style={{ width:"200px" }} value={this.state.gettrxSEEDamount} onChange={this.updateSEEDValue}/>
+                  <br/>
+                  <br/>
+                  <button className='btn btn-danger' onClick={(event) => {
+                                                                       event.preventDefault()
+                                                                       this.SwapTRXSEED(this.state.gettrxSEEDamount)
+                                                                     }  }>Swap TRX to SEED
+                  </button>
+                  <br/>
+                  <br/>
+                  <br/>
+                  <br/>
+                  <br/>
+
+
+
+
+
+
+
+                  <br/>
+                  <br/>
+                  <h4> Get TRC10 TERC Tokens in exchange with TRX for 5:1 ratio </h4>
+                  <p> <i> Current TRC10 TERC Supply in Smart Contract : {this.state.TERCcontractbalance} </i></p>
+                  <br/>
+                  <p>Type number of TERC tokens to exchange</p>
+                  <input style={{ width:"200px" }} value={this.state.gettrxTERCamount} onChange={this.updateTERCValue}/>
+                  <br/>
+                  <br/>
+                  <button className='btn btn-danger' onClick={(event) => {
+                                                                       event.preventDefault()
+                                                                       this.SwapTRXTERC(this.state.gettrxTERCamount)
+                                                                     }  }>Swap TRX to TERC
+                  </button>
+                  <br/>
+                  <br/>
+                  <br/>
+                  <br/>
+                  <br/>
+
+
+
+
+
+
+
+
+                  <br/>
+                  <br/>
+                  <h4> Get TRC10 LOCT Tokens in exchange with TRX for 5:1 ratio </h4>
+                  <p> <i> Current TRC10 LOCT Supply in Smart Contract : {this.state.LOCTcontractbalance} </i></p>
+                  <br/>
+                  <p>Type number of LOCT tokens to exchange</p>
+                  <input style={{ width:"200px" }} value={this.state.gettrxLOCTamount} onChange={this.updateLOCTValue}/>
+                  <br/>
+                  <br/>
+                  <button className='btn btn-danger' onClick={(event) => {
+                                                                       event.preventDefault()
+                                                                       this.SwapTRXLOCT(this.state.gettrxLOCTamount)
+                                                                     }  }>Swap TRX to LOCT
+                  </button>
+                  <br/>
+                  <br/>
+                  <br/>
+                  <br/>
+                  <br/>
+
+
+
+
+
+
+
+
+
+                  <br/>
+                  <br/>
+                  <h4> Get TRC10 MMT Tokens in exchange with TRX for 5:1 ratio </h4>
+                  <p> <i> Current TRC10 MMT Supply in Smart Contract : {this.state.MMTcontractbalance} </i></p>
+                  <br/>
+                  <p>Type number of MMT tokens to exchange</p>
+                  <input style={{ width:"200px" }} value={this.state.gettrxMMTamount} onChange={this.updateMMTValue}/>
+                  <br/>
+                  <br/>
+                  <button className='btn btn-danger' onClick={(event) => {
+                                                                       event.preventDefault()
+                                                                       this.SwapTRXMMT(this.state.gettrxMMTamount)
+                                                                     }  }>Swap TRX to MMT
+                  </button>
+                  <br/>
+                  <br/>
+                  <br/>
+                  <br/>
+                  <br/>
+
+
+
+
+
+
+
+                  <br/>
+                  <br/>
+                  <h4> Get TRC10 ACTIV Tokens in exchange with TRX for 5:1 ratio </h4>
+                  <p> <i> Current TRC10 ACTIV Supply in Smart Contract : {this.state.ACTIVcontractbalance} </i></p>
+                  <br/>
+                  <p>Type number of ACTIV tokens to exchange</p>
+                  <input style={{ width:"200px" }} value={this.state.gettrxACTIVamount} onChange={this.updateACTIVValue}/>
+                  <br/>
+                  <br/>
+                  <button className='btn btn-danger' onClick={(event) => {
+                                                                       event.preventDefault()
+                                                                       this.SwapTRXACTIV(this.state.gettrxACTIVamount)
+                                                                     }  }>Swap TRX to ACTIV
+                  </button>
+                  <br/>
+                  <br/>
+                  <br/>
+                  <br/>
+                  <br/>
+
+
+
+
+
+
+
+
+
+
+
+                  <br/>
+                  <br/>
+                  <h4> Get TRC10 KIWI Tokens in exchange with TRX for 5:1 ratio </h4>
+                  <p> <i> Current TRC10 KIWI Supply in Smart Contract : {this.state.KIWIcontractbalance} </i></p>
+                  <br/>
+                  <p>Type number of KIWI tokens to exchange</p>
+                  <input style={{ width:"200px" }} value={this.state.gettrxKIWIamount} onChange={this.updateKIWIValue}/>
+                  <br/>
+                  <br/>
+                  <button className='btn btn-danger' onClick={(event) => {
+                                                                       event.preventDefault()
+                                                                       this.SwapTRXKIWI(this.state.gettrxKIWIamount)
+                                                                     }  }>Swap TRX to KIWI
+                  </button>
+                  <br/>
+                  <br/>
+                  <br/>
+                  <br/>
+                  <br/>
+
+
+
+
+
+
+                  <hr style={{color: 'red', backgroundColor: 'red', height: 0.5}}/>
+                  <p style={{color: 'red'}}> <i> *For Official Use Only </i></p>
+
+                  <p> <i> Current TRX Supply in Smart Contract : {this.state.TRXcontractbalance} </i></p>
+
+
+
+
+
+
+                  <br/>
+                  <p> Address of transfer : </p>
+                  <input style={{ width:"400px" }} value={this.state.withdrawtrxaddress} onChange={this.updateWithdrawTRXAddressValue}/>
+                  <br/>
+                  <br/>
+                  <p> Amount to transfer from contract : </p>
+                  <input style={{ width:"80px" }} value={this.state.withdrawtrxamount} onChange={this.updateWithdrawTRXAmountValue}/>
+                  <br/>
+                  <br/>
+                  <button className='btn btn-danger' onClick={(event) => {
+                                                                       event.preventDefault()
+                                                                       this.withdrawTRX(this.state.withdrawtrxaddress, this.state.withdrawtrxamount)
+                                                                     }  }>Withdraw
+                  </button>
+                  <br/>
+                  <br/>
+
+
+
+
+
+
+                  <br/>
+                  <p> Amount to deposit in Smart Contract : </p>
+                  <input style={{ width:"80px" }} value={this.state.deposittrxvalue} onChange={this.updateDepositTRXValue}/>
+                  <br/>
+                  <br/>
+                  <button className='btn btn-danger' onClick={(event) => {
+                                                                       event.preventDefault()
+                                                                       this.depositTRX(this.state.deposittrxvalue)
+                                                                     }  }>Deposit
+                  </button>
+                  <br/>
+                  <br/>
+
+
+
+
+
+
+
+                  <br/>
+                  <p> Address of new Owner : </p>
+                  <input style={{ width:"400px" }} value={this.state.newowner} onChange={this.updateTransferOwnershipValue}/>
+                  <br/>
+                  <br/>
+                  <button className='btn btn-danger' onClick={(event) => {
+                                                                       event.preventDefault()
+                                                                       this.transferOwnership(this.state.newowner)
+                                                                     }  }>Transfer Ownership
+                  </button>
+                  <br/>
+                  <br/>
+                  <hr style={{color: 'red', backgroundColor: 'red', height: 0.5}}/>
 
 
 
