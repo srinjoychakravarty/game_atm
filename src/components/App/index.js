@@ -1,9 +1,8 @@
 import React from 'react';
-import TronLinkGuide from 'components/TronLinkGuide';
 import TronWeb from 'tronweb';
+import TronLinkGuide from 'components/TronLinkGuide';
 import Utils from 'utils';
 import Swal from 'sweetalert2';
-
 import './App.scss';
 
 const FOUNDATION_ADDRESS = 'TWiWt5SEDzaEqS6kE5gandWMNfxR2B5xzg';
@@ -13,7 +12,7 @@ const SATVA_TOKEN_ID = 1001010;
 const LEAF_TOKEN_ID = 1001864;
 const SEED_TOKEN_ID = 1000001;
 const TERC_TOKEN_ID = 1000226;
-const LOCT_TOKEN_ID = 1000604; 
+const LOCT_TOKEN_ID = 1000604;
 const MMT_TOKEN_ID = 1001071;
 const ACTIV_TOKEN_ID = 1002171;
 const KIWI_TOKEN_ID = 1001050;
